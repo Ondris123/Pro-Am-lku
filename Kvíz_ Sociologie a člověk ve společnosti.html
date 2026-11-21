@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="cs"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kvíz: Sociologie a člověk ve společnosti</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&display=swap">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f8ecd0;--card:#fff;--tx:#3a2a30;--mu:#8a7479;--ok:#16a34a;--okb:#dcfce7;--no:#dc2626;--nob:#fee2e2;--bd:#f6d9e4}
+:root{color-scheme:light}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.45 "Nunito","Trebuchet MS",system-ui,sans-serif;min-height:100vh}
+main{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:8px 0 4px;background:linear-gradient(90deg,#a84d73,#c4768f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mu);margin:0 0 14px}
+.bar{height:12px;border-radius:99px;background:var(--bd);overflow:hidden;margin:10px 0}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f0a9c1,#e07a9f);transition:width .3s}
+.top{display:flex;justify-content:space-between;color:var(--mu);font-size:.9rem}
+.card{background:var(--card);border-radius:26px;border:2px solid var(--bd);box-shadow:0 6px 0 var(--bd);overflow:hidden;margin:14px 0 22px}
+.tag{background:color-mix(in srgb,var(--c) 12%,var(--card));color:var(--c);padding:8px 16px;font-weight:600}
+.q{padding:16px 16px 6px;font-size:1.2rem;font-weight:800}
+.opts{padding:8px 16px 16px;display:grid;gap:10px}
+button{font:inherit;color:inherit;text-align:left;border:2px solid var(--bd);background:var(--card);border-radius:18px;padding:12px 14px;cursor:pointer;transition:transform .1s}
+button:active:not(:disabled){transform:scale(.98)}
+button:hover:not(:disabled){background:var(--bd)}
+button:focus-visible{outline:3px solid var(--c);outline-offset:2px}
+button:disabled{cursor:default}
+button.ok{background:var(--okb);border-color:var(--ok);border-left-color:var(--ok)}
+button.no{background:var(--nob);border-color:var(--no);border-left-color:var(--no)}
+.next{background:color-mix(in srgb,var(--c) 14%,var(--card));color:var(--c);border-color:var(--c);text-align:center;font-weight:600;width:100%}
+.next:hover:not(:disabled){background:color-mix(in srgb,var(--c) 22%,var(--card))}
+.big{font-size:3rem;text-align:center;margin:10px 0}
+.opts button{display:flex;align-items:center}
+.opts .next{justify-content:center}
+.L{flex:none;width:30px;height:30px;border-radius:50%;background:var(--bd);display:inline-flex;align-items:center;justify-content:center;font-weight:800;color:#a84d73;margin-right:12px}
+.em{display:block;font-size:1.7rem}
+.msg{background:color-mix(in srgb,#f0a9c1 25%,#fff);border-radius:18px;padding:10px 14px;text-align:center;font-weight:800;color:#a84d73;animation:pop .4s}
+button.ok,button.no{animation:pop .35s}
+button.no{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){button.ok,button.no,.msg{animation:none}}
+.tp{background:color-mix(in srgb,var(--c) 10%,var(--card));color:var(--tx);border-color:var(--bd);padding:16px;line-height:1.3}
+.tp:hover:not(:disabled){background:color-mix(in srgb,var(--c) 20%,var(--card))}
+.tp small{color:var(--mu)}
+.bk{background:none;border:0;border-left:0;color:var(--mu);padding:6px 0;font-size:.95rem}
+.res{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:18px}
+.res li{margin:6px 0}
+.row{display:grid;gap:10px;margin-top:14px}
+.row button{text-align:center;font-weight:600}
+.cats{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.cats span{color:#fff;border-radius:99px;padding:3px 10px;font-size:.85rem}
+</style></head><body><main>
+<h1>Sociologie a člověk ve společnosti</h1>
+<p class="sub" id="sub"></p>
+<div id="app"></div>
+</main>
+<script>
+const C=[["Úvod a výzkum","#a84d73","🔍"],["Osobnosti","#b8607f","🧠"],["Vývoj společnosti","#a84d73","🏛️"],["Změny a globalizace","#b8607f","🌍"],["Sociální hnutí","#a84d73","✊"],["Normy a deviace","#b8607f","📏"]];
+// [kategorie, otázka, správná, špatná, špatná, špatná]
+const Q=[
+[0,"Sociologie je…","společenská věda o chování člověka ve společnosti a jeho sociálních příčinách","věda o duševním životě jednotlivce","věda o hospodářství států","věda pouze o minulosti lidstva"],
+[0,"Co je předmětem zkoumání sociologie?","člověk jako součást společnosti: normy, role, instituce, změny, vztahy","pouze jednotlivec","pouze státní instituce","pouze historické události"],
+[0,"Sociologie vznikla v 19. stol. jako reakce na…","Francouzskou revoluci, průmyslovou revoluci a rozvoj vědy","objevení Ameriky","třicetiletou válku","vznik internetu"],
+[0,"Francouzská revoluce znamenala…","proměnu společenského řádu, autorit a postavení občanů","urbanizaci a vznik továren","vznik odborů","rozvoj služeb"],
+[0,"Průmyslová revoluce přinesla…","urbanizaci, továrny, nové sociální vrstvy a pracovní podmínky","zánik šlechty","konec zemědělství","vznik internetu"],
+[0,"Správné pořadí fází výzkumu:","otázka → hypotéza a plán → sběr dat → vyhodnocení","hypotéza → otázka → sběr dat → vyhodnocení","sběr dat → otázka → hypotéza → vyhodnocení","otázka → sběr dat → hypotéza → vyhodnocení"],
+[0,"Fáze „Hypotéza a plán“ řeší…","co předpokládáme a koho budeme zkoumat","co přesně chceme zjistit","co z dat skutečně vyplývá","jak sbírat data"],
+[0,"Strategie, která se ptá „Kolik? Jak často?“ (čísla, dotazníky, statistiky, větší počet respondentů):","kvantitativní","kvalitativní","sociometrická","pozitivistická"],
+[0,"Strategie, která se ptá „Proč? Jak to lidé prožívají?“ (rozhovory, pozorování, menší počet případů):","kvalitativní","kvantitativní","sociometrická","statistická"],
+[0,"Sociometrie je…","zkoumání vztahů uvnitř skupiny","měření počtu obyvatel","zpracování dotazníků","měření životní úrovně"],
+[1,"Pojem sociologie a pozitivismus zavedl…","Auguste Comte","Émile Durkheim","Max Weber","Vilfredo Pareto"],
+[1,"Pozitivismus je…; Comte označil za zmenšený model společnosti…","snaha zkoumat společnost vědecky; rodinu","víra v pokrok; stát","optimismus; církev","vědecký skepticismus; třídu"],
+[1,"Anomie (Durkheim) je…","stav bez pravidel, kdy stará přestala platit a nová nevznikla; vede k nárůstu sebevražd","vláda elit","boj mezi třídami","přílišná byrokracie"],
+[1,"Mechanická solidarita (Durkheim):","původní společnost, podobnost, společná pravidla, silné emocionální vazby","dělba rolí a vzájemná závislost","solidarita kapitalistů","solidarita úředníků"],
+[1,"Organická solidarita (Durkheim):","každý plní funkci a role jsou vzájemně závislé","lidé jsou si podobní a mají silné citové vazby","jde o solidaritu v rodině","lidé se řídí jen tradicí"],
+[1,"Karl Marx zkoumal…","třídní vztahy, nerovnosti a konflikty v kapitalistické společnosti","anomii","byrokracii","teorii elit"],
+[1,"Proletariát podle Marxe jsou…","ti, kdo pracují pro kapitalisty","kapitalisté (buržoazie)","šlechta","politická elita"],
+[1,"Z vykořisťování plyne podle Marxe myšlenka…; směr se jmenuje…","revoluce a beztřídní společnosti; marxismus","reforem a monarchie; liberalismus","návratu k tradicím; konzervatismus","posílení byrokracie; pozitivismus"],
+[1,"Max Weber se zabýval…","sociálním jednáním, racionalizací a byrokracií","anomií a solidaritou","třídním bojem","rodinou jako modelem společnosti"],
+[1,"Motivací jednání v tradiční společnosti byly podle Webera…","tradice, emoce a vášně","zisk","vědecké poznání","byrokratická pravidla"],
+[1,"Weberovy teorie:","moci, byrokracie a stratifikace společnosti","elit, anomie a tříd","pozitivismu a solidarity","globalizace a hnutí"],
+[1,"Vilfredo Pareto (Itálie) je znám…","teorií elit a jejich střídání ve společnosti","teorií solidarity","teorií byrokracie","teorií beztřídní společnosti"],
+[1,"T. G. Masaryk se zabýval…","problematikou sebevražd, sociální analýzou a sociální analýzou umění","sociologií politiky","teorií elit","rozvojem sociologie v českém prostředí"],
+[1,"Edvard Beneš je spojen s…","sociologií politiky","sebevraždami","sociologií umění","teorií byrokracie"],
+[1,"Inocenc A. Bláha je spojen s…","rozvojem sociologie v českém prostředí","sociologií politiky","teorií elit","sociologií umění"],
+[2,"Archaická společnost:","lovci a sběrači, kočovný život, tlupy max. 40 členů, do 7. tis. př. n. l.","zemědělství a řemesla","továrny a města","služby a internet"],
+[2,"Tradiční společnost:","zemědělství, řemesla, silné tradice, stavovské postavení, velká nerovnost, život na venkově","továrny a anonymní města","tlupy lovců","služby a znalosti"],
+[2,"Moderní společnost:","industrializace, urbanizace, byrokracie, dělba práce, růst sociální mobility","stavovské postavení","kočovný život","terciér a informační společnost"],
+[2,"Sekularizace je…","zesvětštění společnosti","růst významu náboženství","stěhování do měst","přechod ke službám"],
+[2,"Postmoderní společnost:","terciér (služby, znalosti), informační společnost, vliv médií, konzumní styl","převaha průmyslu","převaha zemědělství","dědičné stavovské postavení"],
+[3,"Důvody změn společnosti:","technologie, demografie, politika a konflikty, kultura a prostředí","náboženství, armáda, školství, rodina","móda, sport, média, ekonomika","norma, deviace, sankce, tradice"],
+[3,"Evoluce je…; revoluce je…","postupná dlouhodobá proměna; rychlá zásadní změna uspořádání","rychlá zásadní změna; postupná proměna","jen změna přírody; jen změna politiky","obojí totéž"],
+[3,"Lineární pojetí změn:","dějiny směřují jedním směrem, etapy navazují, historie se neopakuje","společnosti procházejí opakovaným vzestupem a úpadkem","změny jsou nahodilé","změny řídí vláda"],
+[3,"Cyklické pojetí změn:","společnosti procházejí opakujícími se fázemi vzestupu a úpadku","dějiny směřují stále vzhůru bez zastavení","historie se nikdy neopakuje","změny jsou jen politické"],
+[3,"Globalizace je…","rostoucí propojení ekonomik, kultur, lidí a informací přes hranice","uzavírání států do sebe","návrat k lokální ekonomice","růst významu tradic"],
+[3,"Které z uvedených je RIZIKO globalizace?","nerovnosti, tlak na prostředí, zranitelnost dodavatelských řetězců","dostupnost znalostí","obchod a spolupráce","kulturní výměna"],
+[4,"Sociální hnutí je…; znaky:","kolektivní snaha prosadit či zabránit změně; kolektivní jednání, společný cíl, dlouhodobost","jednorázová akce; spontánnost","politická strana; volby a program","individuální protest; osamělost"],
+[4,"Prostředky sociálních hnutí:","demonstrace, kampaně, petice, stávky, organizování veřejnosti","volební kandidatury","vydávání zákonů","vojenské akce"],
+[4,"Hnutí se liší od politické strany tím, že…","nemusí usilovat o účast ve volbách ani o výkon státní moci","vždy kandiduje ve volbách","vždy usiluje o státní moc","nemá žádný cíl"],
+[4,"Protest je…","konkrétní jednorázová akce, může být součástí hnutí","trvalé dlouhodobé hnutí","politická strana","druh normy"],
+[4,"Dělnické hnutí (18. stol.):","kvůli industrializaci a těžkým podmínkám; vyšší mzdy, kratší doba, bezpečnost; vznik odborů","protest proti válce ve Vietnamu","ochrana přírody","kritika globalizace"],
+[4,"Hippies:","60. léta, San Francisco, „květinové hnutí“, pacifismus, mír, nenásilí, kritika konzumu","18. století, Anglie, mzdy","80. léta, Berlín, sjednocení","50. léta, Paříž, volební právo"],
+[4,"Pacifismus je…","odpor k válce a násilí","kritika globalizace","boj za vyšší mzdy","ochrana přírody"],
+[4,"Ekologická hnutí:","ochrana klimatu, přírody a prostředí, tlak na instituce a korporáty","kritika konzumu a válek","boj za pracovní práva","kritika nerovností globalizace"],
+[4,"Antiglobalizační hnutí:","kritizuje nerovnosti a negativní dopady ekonomické globalizace","chrání klima a přírodu","bojuje proti válce ve Vietnamu","prosazuje kratší pracovní dobu"],
+[5,"Sociální norma je…; funkce:","sdílené pravidlo nebo očekávání chování; umožňuje předvídat chování, usnadňuje soužití, podporuje řád","individuální zvyk; nemá význam","zákon jen pro úředníky; trestá","průměr chování; slouží k měření"],
+[5,"Právní normy:","zákony a předpisy, porušení může vést k právní sankci","představy o správném jednání","pravidla slušnosti","náboženské zvyky"],
+[5,"„Nelhat a pomáhat slabším“ je norma…","morální a etická","právní","zvyk a tradice","sankce"],
+[5,"Pravidla slušnosti, rodinné a kulturní zvyklosti, náboženské normy jsou…","zvyky a tradice","právní normy","morální normy","sankce"],
+[5,"Konformní chování je…","chování v souladu s normami a očekáváními skupiny či společnosti","chování odlišné od norem","chování ohrožující společnost","chování bez pravidel"],
+[5,"Vnitřní kontrola:","dodržuji pravidlo, protože ho považuji za správné nebo samozřejmé","dodržuji pravidlo kvůli hrozbě postihu","dodržuji pravidlo kvůli reakci okolí","nedodržuji pravidlo"],
+[5,"Vnější kontrola:","dodržuji pravidlo kvůli reakci okolí či hrozbě postihu (pozitivní nebo negativní sankce)","dodržuji pravidlo, protože je správné","pravidlo neexistuje","týká se jen zákonů"],
+[5,"Deviantní chování je…","chování odlišné od společensky přijatých norem, může být hodnoceno negativně i pozitivně","chování v souladu s normami","každé porušení zákona","chování cizinců"],
+[5,"Posouzení deviace závisí na…","místě (park x kostel), době, kultuře a toleranci společnosti","pouze na zákonech","pouze na věku člověka","pouze na většině"],
+[5,"Přirozená deviace je např…; sociálně patologický jev je deviace, která…","mezigenerační rozdíly; ohrožuje společnost","porušení zákona; je tolerovaná","móda; je pozitivní","tradice; je zvykem"],
+[0,"Rozvoj vědy vedl k snaze…","společenské změny nejen popsat, ale systematicky vysvětlovat","společenské změny zakázat","nahradit sociologii náboženstvím","změny pouze zaznamenávat"],
+[0,"Metody sociologického výzkumu jsou…","dotazník, rozhovor, pozorování, sociometrie","pokus, sčítání lidu, modelování, měření","demonstrace, petice, stávka, kampaň","zákon, norma, sankce, tradice"],
+[0,"Která fáze výzkumu odpovídá otázce „Co přesně chceme zjistit?“","výzkumná otázka","hypotéza a plán","sběr dat","vyhodnocení"],
+[0,"Ve fázi sběr dat se používá…","dotazník, rozhovor, pozorování","hypotéza a plán","pouze statistiky","pouze sociometrie"],
+[0,"Fáze „Vyhodnocení“ odpovídá na otázku…","co z dat skutečně vyplývá","koho budeme zkoumat","co přesně chceme zjistit","co předpokládáme"],
+[1,"Auguste Comte žil v letech… a pocházel z…","1798–1857, Francie","1858–1917, Francie","1818–1883, Německo","1864–1920, Německo"],
+[1,"Émile Durkheim žil v letech… a pocházel z…; byl…","1858–1917, Francie; jeden ze zakladatelů moderní sociologie","1798–1857, Francie; zakladatel pozitivismu","1864–1920, Německo; autor teorie byrokracie","1848–1923, Itálie; autor teorie elit"],
+[1,"Karl Marx žil v letech… a pocházel z…","1818–1883, Německo","1798–1857, Francie","1864–1920, Německo","1858–1917, Francie"],
+[1,"Max Weber žil v letech… a pocházel z…","1864–1920, Německo","1818–1883, Německo","1858–1917, Francie","1848–1923, Itálie"],
+[1,"Vilfredo Pareto žil v letech… a pocházel z…","1848–1923, Itálie","1864–1920, Německo","1798–1857, Francie","1850–1937, Česko"],
+[1,"Roky Masaryk – Beneš – Bláha:","1850–1937; 1884–1948; 1879–1960","1884–1948; 1850–1937; 1879–1960","1879–1960; 1884–1948; 1850–1937","1850–1937; 1879–1960; 1884–1948"],
+[1,"Podle Webera má každé naše jednání…","nějaký motiv","právní sankci","třídní původ","původ v anomii"],
+[2,"V tradiční společnosti měly zásadní význam…","rodina, příbuzenstvo a místní komunita","továrny a města","média a internet","věda a byrokracie"],
+[2,"V tradiční společnosti většina lidí…","žila na venkově a příliš necestovala","žila ve velkých městech","žila kočovně v tlupách","pracovala ve službách"],
+[2,"Moderní společnost se změnila z…na…","agrární na industriální","industriální na agrární","kočovnou na agrární","industriální na kočovnou"],
+[2,"V moderní společnosti získává na významu…","věda","tradice a dědičné postavení","náboženství","kočovný způsob života"],
+[2,"Pro moderní společnost je typická sociální mobilita, která…","roste","zaniká","je zakázána","je dána pouze narozením"],
+[2,"Co ovlivňuje komunikaci, kulturu a veřejnou debatu v postmoderní společnosti?","média a platformy","tradice a stavy","tovární výroba","tlupy lovců"],
+[2,"Konzumní styl života v postmoderní společnosti je spojen s…","spotřebou, značkami, materialismem a degradací hodnot","tradicemi a náboženstvím","kočovným životem","dělbou práce v továrnách"],
+[2,"Terciér je…","sektor služeb a znalostí","zemědělství","průmysl a továrny","těžba surovin"],
+[3,"Do demografie jako důvodu změn patří…","porodnost, úmrtnost, migrace, stárnutí","reformy, války, revoluce","hodnoty, normy, klima","doprava a komunikace"],
+[3,"Do technologie jako důvodu změn patří…","vědeckotechnický pokrok, doprava a komunikace","porodnost a úmrtnost","reformy a války","hodnoty a klima"],
+[3,"Do politiky a konfliktů jako důvodu změn patří…","reformy, války, revoluce a sociální hnutí","vědeckotechnický pokrok","migrace a stárnutí","hodnoty a klima"],
+[3,"Do kultury a prostředí jako důvodu změn patří…","hodnoty, normy, klima a přírodní podmínky","reformy a války","porodnost a migrace","doprava a komunikace"],
+[3,"Které z uvedených je PŘÍNOS globalizace?","dostupnost znalostí, spolupráce, obchod, kulturní výměna","nerovnosti","tlak na prostředí","zranitelnost dodavatelských řetězců"],
+[4,"Kultura hippies zahrnovala…","hudbu, oblečení a alternativní životní styl","továrny a odbory","byrokracii a státní moc","konzum a značky"],
+[4,"Hodnoty hnutí hippies:","mír, nenásilí, osobní svoboda, kritika konzumu","vyšší mzdy a kratší pracovní doba","ochrana klimatu","kritika globalizace"],
+[5,"Která norma je PSANÁ (na rozdíl od nepsaných)?","právní norma (zákony a předpisy)","morální norma","zvyk","tradice"],
+[5,"Příklady sociální normy:","pozdravit při příchodu, nevyrušovat při výuce, respektovat pořadí ve frontě","mít nejlepší známky, nosit červenou, jíst o víkendu","mít vysoký plat, nosit uniformu, jezdit na kole","platit daně, volit, vlastnit auto"],
+[5,"Funkce sociální normy:","umožňuje předvídat chování, usnadňuje soužití a podporuje společenský řád","trestá všechny deviantní","měří statisticky chování","vytváří třídní rozdíly"],
+[5,"Že ženy nosily kalhoty bylo v 19. stol. deviací. Deviace tedy závisí na…","době","místě","kultuře","zákonech"],
+[5,"Chování, které je v parku v pořádku, ale v kostele ne, ukazuje, že deviace závisí na…","místě","době","věku","zákonech"],
+[5,"Přirozená deviace je např…","mezigenerační rozdíly","trestný čin","porušení zákona","ohrožení společnosti"],
+[5,"Sociálně patologický jev je…","deviantní chování, které představuje hrozbu pro společnost","mezigenerační rozdíl","jakákoli odlišnost","konformní chování"]
+];
+const $=id=>document.getElementById(id);
+const sh=a=>{for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a};
+let cur=[],order=[],i=0,score=0,wrong=[],all=true;
+function start(list){cur=list;order=sh(list.slice());i=0;score=0;wrong=[];show()}
+function show(){
+ if(i>=order.length)return end();
+ const q=order[i],c=C[q[0]][1],o=sh([q[2],q[3],q[4],q[5]]);
+ $("sub").textContent="Otázka "+(i+1)+" z "+order.length+" · ⭐ "+score;
+ $("app").innerHTML='<button class="bk" id="bk">← Zpět na témata</button><div class="bar"><i style="width:'+(i/order.length*100)+'%"></i></div><div class="card" style="--c:'+c+'"><div class="tag">'+C[q[0]][2]+' '+C[q[0]][0]+'</div><div class="q">'+q[1]+'</div><div class="opts" id="o"></div></div>';
+ $("bk").onclick=menu;
+ o.forEach((t,k)=>{const b=document.createElement("button");b.dataset.t=t;b.innerHTML='<span class="L">'+"ABCD"[k]+'</span><span></span>';b.lastChild.textContent=t;b.onclick=()=>pick(b,t,q,c);$("o").appendChild(b)});
+}
+function pick(b,t,q,c){
+ const bs=[...$("o").children];bs.forEach(x=>{x.disabled=true;if(x.dataset.t===q[2])x.classList.add("ok")});
+ const R=a=>a[Math.floor(Math.random()*a.length)];let m;
+ if(t===q[2]){score++;m=R(["Správně! 🎉","Skvělé, tohle umíš! ⭐","Právě tak! 🌸","Jde ti to! 💪","Boom, trefa! 🎯"])}else{b.classList.add("no");wrong.push(q);m=R(["Ups, skoro! 🙈 Správná je ta zelená.","Nevadí, příště to vyjde! 🌈","Tuhle si zapamatuj! 📌","Chyba je učitel, jde se dál! 😉"])}
+ const d=document.createElement("div");d.className="msg";d.textContent=m;$("o").appendChild(d);
+ const n=document.createElement("button");n.className="next";n.style.setProperty("--c",c);
+ n.textContent=i+1<order.length?"Další otázka":"Zobrazit výsledek";n.onclick=()=>{i++;show();window.scrollTo(0,0)};
+ $("o").appendChild(n);n.focus();
+}
+function end(){
+ const p=Math.round(score/order.length*100),e=p>=90?"🏆":p>=70?"🎉":p>=50?"💪":"📚";
+ $("sub").textContent="Hotovo";
+ let h='<div class="bar"><i style="width:100%"></i></div><div class="res"><div class="big">'+e+'</div><h2 style="text-align:center;margin:0">'+score+' / '+order.length+' ('+p+' %)</h2>';
+ if(wrong.length){h+='<p>Tyhle si ještě projdi 👇</p><ul>'+wrong.map(q=>'<li><span style="color:'+C[q[0]][1]+'">●</span> '+q[1]+'<br><b>'+q[2]+'</b></li>').join("")+'</ul>'}
+ else h+='<p style="text-align:center">Bez chyby, všechno umíš! 🥳</p>';
+ h+='</div><div class="row">'+(wrong.length?'<button id="r1" style="--c:#a84d73">🔁 Zkusit znovu jen chybné</button>':'')+'<button id="r2" style="--c:#a84d73">🔄 Zopakovat celé téma</button><button id="r3" style="--c:#a84d73">🏠 Zpět na témata</button></div>';
+ $("app").innerHTML=h;
+ if($("r1"))$("r1").onclick=()=>start(wrong);
+ $("r2").onclick=()=>start(cur);$("r3").onclick=menu;
+}
+function menu(){
+ $("sub").textContent="Vyber si téma a jdeme na to! 🚀";
+ $("app").innerHTML='<div class="row">'+C.map((c,k)=>'<button class="tp" data-k="'+k+'" style="--c:'+c[1]+'"><span class="em">'+c[2]+'</span><b>'+c[0]+'</b><br><small>'+Q.filter(q=>q[0]==k).length+' otázek</small></button>').join("")+'</div><div class="row"><button id="s" style="--c:#a84d73">🎲 Vše dohromady ('+Q.length+' otázek)</button></div>';
+ $("s").onclick=()=>start(Q);
+ document.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>start(Q.filter(q=>q[0]==b.dataset.k)));
+}
+menu();
+</script></body></html>
